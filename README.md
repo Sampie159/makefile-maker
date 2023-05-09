@@ -11,10 +11,6 @@ Example C++:
 ```sh
 mmaker cpp cpp-project
 ```
-or
-```sh
-mmaker cc cpp-project
-```
 
 ### Output
 ```

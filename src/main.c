@@ -4,7 +4,7 @@
 int main(int argc, char **argv) {
   if (argc != 3)
     printf("Incorrect usage, please run something like this:\nmmaker "
-           "<language> <project-name>");
+           "<language> <project-name>\n");
   else {
     setup_project(argv);
   }
