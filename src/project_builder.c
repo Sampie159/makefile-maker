@@ -5,14 +5,14 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-char *build_folders(char *project_name) {
+const char *build_folders(const char *project_name) {
   // Get current working directory
   char current_directory[256];
   getcwd(current_directory, sizeof(current_directory));
   printf("Current directory: %s\n", current_directory);
 
   // Create the paths
-  char project_path[256];
+  char *project_path = (char *)malloc(256 * sizeof(char));
   char bin_dir[256];
   char obj_dir[256];
   char src_dir[256];
@@ -35,21 +35,45 @@ char *build_folders(char *project_name) {
   return project_path;
 }
 
-void setup_c_files(char *project_path, char *project_name) {
-  // TODO
+void setup_c_files(const char *project_path, const char *project_name) {
+  char makefile_path[256];
+
+  snprintf(makefile_path, 256, "%s/Makefile", project_path);
+
+  // Create Makefile
+  FILE *makefile = fopen(makefile_path, "w");
+
+  fprintf(makefile, "TEST");
+
+  fclose(makefile);
 }
 
-void setup_cpp_files(char *project_path, char *project_name) {
-  // TODO
+void setup_cpp_files(const char *project_path, const char *project_name) {
+  char makefile_path[256];
+
+  snprintf(makefile_path, 256, "%s/Makefile", project_path);
+
+  // Create Makefile
+  FILE *makefile = fopen(makefile_path, "w");
+
+  fprintf(makefile, "TEST");
+
+  fclose(makefile);
 }
 
-void setup_c_project(char *project_name) { build_folders(project_name); }
+void setup_c_project(const char *project_name) {
+  const char *project_path = build_folders(project_name);
+  setup_c_files(project_path, project_name);
+}
 
-void setup_cpp_project(char *project_name) { build_folders(project_name); }
+void setup_cpp_project(const char *project_name) {
+  const char *project_path = build_folders(project_name);
+  setup_cpp_files(project_path, project_name);
+}
 
 void setup_project(char **argv) {
-  char *language = argv[1];
-  char *project_name = argv[2];
+  const char *language = argv[1];
+  const char *project_name = argv[2];
 
   printf("Language: %s\nProject name: %s\n", language, project_name);
 
