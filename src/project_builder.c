@@ -69,7 +69,7 @@ void setup_c_files(const char *project_path, const char *project_name) {
 
   FILE *main_file = fopen(main_path, "w");
 
-  fprintf(main_file, "#include <stdio.h>\n"
+  fprintf(main_file, "#include <stdio.h>\n\n"
                      "int main() {\n"
                      "\tprintf(\"Hello world!\\n\");\n\n"
                      "\treturn 0;\n"
@@ -116,7 +116,7 @@ void setup_cpp_files(const char *project_path, const char *project_name) {
 
   FILE *main_file = fopen(main_path, "w");
 
-  fprintf(main_file, "#include <iostream>\n"
+  fprintf(main_file, "#include <iostream>\n\n"
                      "int main() {\n"
                      "\tstd::cout << \"Hello World!\\n\";\n\n"
                      "\treturn 0;\n"
