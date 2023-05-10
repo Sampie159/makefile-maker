@@ -38,25 +38,26 @@ void setup_c_files(const char *project_path, const char *project_name) {
 
   FILE *makefile = fopen(makefile_path, "w");
 
-  fprintf(makefile, "CFLAGS=-Wall -Wextra -g\n\
-CC = gcc\n\n\
-SRCDIR=src\n\
-SRCS=${wildcard $(SRCDIR)/*.c}\n\n\
-OBJDIR=obj\n\
-OBJS=${patsubst $(SRCDIR)/%%.c, $(OBJDIR)/%%.o, $(SRCS)}\n\n\
-BINDIR=bin\n\n\
-all: $(BINDIR)/%s\n\n\
-release: CFLAGS=-Wall -Wextra -DNDEBUG -pipe -march=native -O2\n\
-release: $(BINDIR)/%s\n\n\
-run: $(BINDIR)/%s\n\
-\t$(BINDIR)/%s\n\n\
-$(OBJDIR)/%%.o: $(SRCDIR)/%%.c\n\
-\t$(CC) $(CFLAGS) -c -o $@ $^\n\
-$(BINDIR)/%s: $(OBJS)\n\
-\t$(CC) $(CFLAGS) -o $@ $^\n\n\
-clean:\n\
-\trm $(OBJDIR)/*\n\
-\trm $(BINDIR)/%s",
+  fprintf(makefile,
+          "CFLAGS=-Wall -Wextra -g\n"
+          "CC = gcc\n\n"
+          "SRCDIR=src\n"
+          "SRCS=${wildcard $(SRCDIR)/*.c}\n\n"
+          "OBJDIR=obj\n"
+          "OBJS=${patsubst $(SRCDIR)/%%.c, $(OBJDIR)/%%.o, $(SRCS)}\n\n"
+          "BINDIR=bin\n\n"
+          "all: $(BINDIR)/%s\n\n"
+          "release: CFLAGS=-Wall -Wextra -DNDEBUG -pipe -march=native -O2\n"
+          "release: $(BINDIR)/%s\n\n"
+          "run: $(BINDIR)/%s\n"
+          "\t$(BINDIR)/%s\n\n"
+          "$(OBJDIR)/%%.o: $(SRCDIR)/%%.c\n"
+          "\t$(CC) $(CFLAGS) -c -o $@ $^\n\n"
+          "$(BINDIR)/%s: $(OBJS)\n"
+          "\t$(CC) $(CFLAGS) -o $@ $^\n\n"
+          "clean:\n"
+          "\trm $(OBJDIR)/*\n"
+          "\trm $(BINDIR)/%s",
           project_name, project_name, project_name, project_name, project_name,
           project_name);
 
@@ -81,25 +82,26 @@ void setup_cpp_files(const char *project_path, const char *project_name) {
 
   FILE *makefile = fopen(makefile_path, "w");
 
-  fprintf(makefile, "CFLAGS=-Wall -Wextra -g\n\
-CC = g++\n\n\
-SRCDIR=src\n\
-SRCS=${wildcard $(SRCDIR)/*.cpp}\n\n\
-OBJDIR=obj\n\
-OBJS=${patsubst $(SRCDIR)/%%.cpp, $(OBJDIR)/%%.o, $(SRCS)}\n\n\
-BINDIR=bin\n\n\
-all: $(BINDIR)/%s\n\n\
-release: CFLAGS=-Wall -Wextra -DNDEBUG -pipe -march=native -O2\n\
-release: $(BINDIR)/%s\n\n\
-run: $(BINDIR)/%s\n\
-\t$(BINDIR)/%s\n\n\
-$(OBJDIR)/%%.o: $(SRCDIR)/%%.cpp\n\
-\t$(CC) $(CFLAGS) -c -o $@ $^\n\
-$(BINDIR)/%s: $(OBJS)\n\
-\t$(CC) $(CFLAGS) -o $@ $^\n\n\
-clean:\n\
-\trm $(OBJDIR)/*\n\
-\trm $(BINDIR)/%s",
+  fprintf(makefile,
+          "CFLAGS=-Wall -Wextra -g\n"
+          "CC = g++\n\n"
+          "SRCDIR=src\n"
+          "SRCS=${wildcard $(SRCDIR)/*.cpp}\n\n"
+          "OBJDIR=obj\n"
+          "OBJS=${patsubst $(SRCDIR)/%%.cpp, $(OBJDIR)/%%.o, $(SRCS)}\n\n"
+          "BINDIR=bin\n\n"
+          "all: $(BINDIR)/%s\n\n"
+          "release: CFLAGS=-Wall -Wextra -DNDEBUG -pipe -march=native -O2\n"
+          "release: $(BINDIR)/%s\n\n"
+          "run: $(BINDIR)/%s\n"
+          "\t$(BINDIR)/%s\n\n"
+          "$(OBJDIR)/%%.o: $(SRCDIR)/%%.cpp\n"
+          "\t$(CC) $(CFLAGS) -c -o $@ $^\n\n"
+          "$(BINDIR)/%s: $(OBJS)\n"
+          "\t$(CC) $(CFLAGS) -o $@ $^\n\n"
+          "clean:\n"
+          "\trm $(OBJDIR)/*\n"
+          "\trm $(BINDIR)/%s",
           project_name, project_name, project_name, project_name, project_name,
           project_name);
 
