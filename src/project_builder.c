@@ -5,22 +5,24 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#define MAX_SIZE 256
+
 const char *build_folders(const char *project_name) {
   // Get current working directory
-  char current_directory[256];
-  getcwd(current_directory, sizeof(current_directory));
+  char current_directory[MAX_SIZE];
+  getcwd(current_directory, MAX_SIZE);
 
   // Create the paths
-  char *project_path = (char *)malloc(256 * sizeof(char));
-  char bin_dir[256];
-  char obj_dir[256];
-  char src_dir[256];
+  char *project_path = (char *)malloc(MAX_SIZE * sizeof(char));
+  char bin_dir[MAX_SIZE];
+  char obj_dir[MAX_SIZE];
+  char src_dir[MAX_SIZE];
 
   // Populate the paths
-  snprintf(project_path, 256, "%s/%s", current_directory, project_name);
-  snprintf(bin_dir, 256, "%s/bin", project_path);
-  snprintf(obj_dir, 256, "%s/obj", project_path);
-  snprintf(src_dir, 256, "%s/src", project_path);
+  snprintf(project_path, MAX_SIZE, "%s/%s", current_directory, project_name);
+  snprintf(bin_dir, MAX_SIZE, "%s/bin", project_path);
+  snprintf(obj_dir, MAX_SIZE, "%s/obj", project_path);
+  snprintf(src_dir, MAX_SIZE, "%s/src", project_path);
 
   // Create the folders
   mkdir(project_path, 0777);
@@ -33,8 +35,8 @@ const char *build_folders(const char *project_name) {
 
 void setup_c_files(const char *project_path, const char *project_name) {
   // Create Makefile
-  char makefile_path[256];
-  snprintf(makefile_path, 256, "%s/Makefile", project_path);
+  char makefile_path[MAX_SIZE];
+  snprintf(makefile_path, MAX_SIZE, "%s/Makefile", project_path);
 
   FILE *makefile = fopen(makefile_path, "w");
 
@@ -64,8 +66,8 @@ void setup_c_files(const char *project_path, const char *project_name) {
   fclose(makefile);
 
   // Create main.c
-  char main_path[256];
-  snprintf(main_path, 256, "%s/src/main.c", project_path);
+  char main_path[MAX_SIZE];
+  snprintf(main_path, MAX_SIZE, "%s/src/main.c", project_path);
 
   FILE *main_file = fopen(main_path, "w");
 
@@ -80,8 +82,8 @@ void setup_c_files(const char *project_path, const char *project_name) {
 
 void setup_cpp_files(const char *project_path, const char *project_name) {
   // Create Makefile
-  char makefile_path[256];
-  snprintf(makefile_path, 256, "%s/Makefile", project_path);
+  char makefile_path[MAX_SIZE];
+  snprintf(makefile_path, MAX_SIZE, "%s/Makefile", project_path);
 
   FILE *makefile = fopen(makefile_path, "w");
 
@@ -111,8 +113,8 @@ void setup_cpp_files(const char *project_path, const char *project_name) {
   fclose(makefile);
 
   // Create main.cpp
-  char main_path[256];
-  snprintf(main_path, 256, "%s/src/main.cpp", project_path);
+  char main_path[MAX_SIZE];
+  snprintf(main_path, MAX_SIZE, "%s/src/main.cpp", project_path);
 
   FILE *main_file = fopen(main_path, "w");
 
