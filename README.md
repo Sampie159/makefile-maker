@@ -2,14 +2,18 @@
 ## Generate a barebones C/C++ project structure including a basic Makefile
 ### Usage: mmaker \<language\> \<project-name\>
 
-Example C:
+#### Example C:
 ```sh
 mmaker c c-project
 ```
 
-Example C++:
+#### Example C++:
 ```sh
 mmaker cpp cpp-project
+```
+or
+```sh
+mmaker cc cpp-project
 ```
 
 ### Output
