@@ -19,7 +19,7 @@ c-project/
 └───bin/
 └───obj/
 └───src/
-|   Makefile
+└───Makefile
 ```
 
 # Install
