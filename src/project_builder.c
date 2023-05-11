@@ -73,33 +73,27 @@ void setup_files(const char *language, const char *project_name,
   fclose(makefile);
 
   // Initilize a "Hello World!"
+  char main_path[MAX_SIZE];
+  snprintf(main_path, MAX_SIZE, "%s/src/main.%s", project_path, language);
+
+  FILE *main_file = fopen(main_path, "w");
+
   if (strcmp(language, "c") == 0) {
-    char main_path[MAX_SIZE];
-    snprintf(main_path, MAX_SIZE, "%s/src/main.c", project_path);
-
-    FILE *main_file = fopen(main_path, "w");
-
     fprintf(main_file, "#include <stdio.h>\n\n"
                        "int main() {\n"
                        "\tprintf(\"Hello world!\\n\");\n\n"
                        "\treturn 0;\n"
                        "}");
 
-    fclose(main_file);
   } else {
-    char main_path[MAX_SIZE];
-    snprintf(main_path, MAX_SIZE, "%s/src/main.%s", project_path, language);
-
-    FILE *main_file = fopen(main_path, "w");
-
     fprintf(main_file, "#include <iostream>\n\n"
                        "int main() {\n"
                        "\tstd::cout << \"Hello World!\\n\";\n\n"
                        "\treturn 0;\n"
                        "}");
-
-    fclose(main_file);
   }
+
+  fclose(main_file);
 }
 
 int is_valid_language(const char *language) {
