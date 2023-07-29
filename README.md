@@ -1,3 +1,5 @@
+# NEED TO REWRITE THIS README
+
 # Sam's C/C++ CLI project setup builder
 ## Generate a barebones C/C++ project structure including a basic Makefile
 ### Usage: mmaker \<language\> \<project-name\>

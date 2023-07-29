@@ -1,6 +1,1 @@
-obj/
-bin/
-teste/
-
-*.o
-mmaker
+build
