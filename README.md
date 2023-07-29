@@ -1,52 +1,32 @@
-# NEED TO REWRITE THIS README
-
 # Sam's C/C++ CLI project setup builder
-## Generate a barebones C/C++ project structure including a basic Makefile
-### Usage: mmaker \<language\> \<project-name\>
+## Generate a barebones C/C++ project structure using CMake
+### Usage: mmaker -l \<language\> -p \<project-name\>
+### Help command: mmaker -h
 
 #### Example C:
 ```sh
-mmaker c c-project
+mmaker -l c -p c-project
 ```
 
 #### Example C++:
 ```sh
-mmaker cpp cpp-project
+mmaker -l cpp -p cpp-project
 ```
 or
 ```sh
-mmaker cc cpp-project
+mmaker -l cc -p cpp-project
 ```
 
-### Output
-```
-c-project/
-|
-└───bin/
-└───obj/
-└───src/
-└───Makefile
-```
-
-# Install
-Clone this repository
+# Installation
 ```sh
 git clone https://github.com/Sampie159/makefile-maker.git
 cd makefile-maker
-```
-Then
-```sh
-make install
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+sudo cmake --install build
 ```
 
 # Uninstall
-In the project directory run:
-```sh
-make uninstall
-```
-
-or simply run
 ```sh
 sudo rm /usr/local/bin/mmaker
 ```
-from anywhere.

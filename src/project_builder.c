@@ -8,10 +8,11 @@
 #define MAX_SIZE 256
 #define MAX_PROJ_NAME 64
 
-static void setup_files(MMaker *mmaker, const char *cwd);
-static void create_directories(MMaker *mmaker, const char *cwd);
+static void setup_files(MMaker *mmaker, const char *project_path);
+static void create_directories(const char *project_path);
 static int is_valid_language(const char *language);
 static void print_help(void);
+static void free_mmaker(MMaker **mmaker);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                          PUBLIC FUNCTIONS                               *
@@ -26,13 +27,19 @@ void setup_project(MMaker *mmaker) {
   char cwd[MAX_SIZE];
   getcwd(cwd, MAX_SIZE);
 
-  create_directories(mmaker, cwd);
-  setup_files(mmaker, cwd);
+  char project_path[MAX_SIZE];
+  snprintf(project_path, MAX_SIZE, "%s/%s", cwd, mmaker->project_name);
+
+  create_directories(project_path);
+  setup_files(mmaker, project_path);
+
   printf("Project %s initiated successfully.\n", mmaker->project_name);
+
+  free_mmaker(&mmaker);
 }
 
 MMaker *parse_args(int argc, char *argv[]) {
-  char language[3] = "";
+  char language[4] = "";
   char project_name[MAX_PROJ_NAME] = "";
 
   int opt;
@@ -70,21 +77,11 @@ MMaker *parse_args(int argc, char *argv[]) {
   return mmaker;
 }
 
-void free_mmaker(MMaker **mmaker) {
-  memset(*mmaker, 0, sizeof(MMaker));
-  free(*mmaker);
-  *mmaker = NULL;
-}
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                          PRIVATE FUNCTIONS                              *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static void create_directories(MMaker *mmaker, const char *cwd) {
-  // Define the project path
-  char project_path[MAX_SIZE];
-  snprintf(project_path, MAX_SIZE, "%s/%s", cwd, mmaker->project_name);
-
+static void create_directories(const char *project_path) {
   // Define the source folder
   char src_dir[MAX_SIZE];
   snprintf(src_dir, MAX_SIZE, "%s/src", project_path);
@@ -94,13 +91,14 @@ static void create_directories(MMaker *mmaker, const char *cwd) {
   mkdir(src_dir, 0777);
 }
 
-static void setup_files(MMaker *mmaker, const char *cwd) {
+static void setup_files(MMaker *mmaker, const char *project_path) {
   char cmake_path[MAX_SIZE];
-  snprintf(cmake_path, MAX_SIZE, "%s/CMakeLists.txt", cwd);
+  snprintf(cmake_path, MAX_SIZE, "%s/CMakeLists.txt", project_path);
   char main_path[MAX_SIZE];
-  snprintf(main_path, MAX_SIZE, "%s/src/main.c", cwd);
+  snprintf(main_path, MAX_SIZE, "%s/src/main.%s", project_path,
+           mmaker->language);
   char cmake_src_path[MAX_SIZE];
-  snprintf(cmake_src_path, MAX_SIZE, "%s/src/CMakeLists.txt", cwd);
+  snprintf(cmake_src_path, MAX_SIZE, "%s/src/CMakeLists.txt", project_path);
 
   FILE *cmake = fopen(cmake_path, "w");
   if (cmake == NULL) {
@@ -108,11 +106,13 @@ static void setup_files(MMaker *mmaker, const char *cwd) {
     exit(1);
   }
 
-  char *cmake_extra = "";
+  char cmake_extra[128] = "";
   if (strcmp(mmaker->language, "c") == 0) {
-    cmake_extra = "set(CMAKE_C_STANDARD 17)\n"
-                  "set(CMAKE_C_STANDARD_REQUIRED True)\n"
-                  "set(CMAKE_C_FLAGS \"-Wall -Wextra -Wpedantic\")\n\n";
+    strncpy(cmake_extra,
+            "set(CMAKE_C_STANDARD 17)\n"
+            "set(CMAKE_C_STANDARD_REQUIRED True)\n"
+            "set(CMAKE_C_FLAGS \"-Wall -Wextra -Wpedantic\")\n\n",
+            128);
   }
 
   char cmake_content[1024];
@@ -135,21 +135,25 @@ static void setup_files(MMaker *mmaker, const char *cwd) {
     exit(1);
   }
 
-  char *main_content;
+  char main_content[128];
   if (strcmp(mmaker->language, "c") == 0) {
-    main_content = "#include <stdio.h>\n\n"
-                   "int main(void) {\n"
-                   "  printf(\"Hello World!\\n\');\n"
-                   "\n"
-                   "  return 0;\n"
-                   "}\n";
+    strncpy(main_content,
+            "#include <stdio.h>\n\n"
+            "int main(void) {\n"
+            "  printf(\"Hello World!\\n\");\n"
+            "\n"
+            "  return 0;\n"
+            "}\n",
+            128);
   } else {
-    main_content = "#include <iostream>\n\n"
-                   "int main(void) {\n"
-                   "  std::cout << \"Hello World!\\n\";\n"
-                   "\n"
-                   "  return 0;\n"
-                   "}\n";
+    strncpy(main_content,
+            "#include <iostream>\n\n"
+            "int main(void) {\n"
+            "  std::cout << \"Hello World!\\n\";\n"
+            "\n"
+            "  return 0;\n"
+            "}\n",
+            128);
   }
 
   fprintf(main, "%s", main_content);
@@ -161,7 +165,7 @@ static void setup_files(MMaker *mmaker, const char *cwd) {
     exit(1);
   }
 
-  char *cmake_src_content;
+  char cmake_src_content[128];
   snprintf(cmake_src_content, 128,
            "cmake_minimum_required(VERSION 3.10)\n\n"
            "add_executable(\n"
@@ -186,4 +190,17 @@ static int is_valid_language(const char *language) {
   return 0;
 }
 
-static void print_help(void) { printf("Help!\n"); }
+static void print_help(void) {
+  printf("Usage: mmaker -l <language> -p <project_name>\n"
+         "\n"
+         "Options:\n"
+         "  -l <language>       The language of the project (c, cpp, cc)\n"
+         "  -p <project_name>   The name of the project\n"
+         "  -h                  Print this help message\n");
+}
+
+static void free_mmaker(MMaker **mmaker) {
+  memset(*mmaker, 0, sizeof(MMaker));
+  free(*mmaker);
+  *mmaker = NULL;
+}
