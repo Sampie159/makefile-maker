@@ -8,6 +8,10 @@
 #define MAX_SIZE 256
 #define MAX_PROJ_NAME 64
 
+#define BOLD "\033[1m"
+#define RESET "\033[0m"
+#define UNDERLINE "\033[4m"
+
 static void setup_files(MMaker *mmaker, const char *project_path);
 static void create_directories(const char *project_path);
 static int is_valid_language(const char *language);
@@ -191,12 +195,13 @@ static int is_valid_language(const char *language) {
 }
 
 static void print_help(void) {
-  printf("Usage: mmaker -l <language> -p <project_name>\n"
-         "\n"
-         "Options:\n"
-         "  -l <language>       The language of the project (c, cpp, cc)\n"
-         "  -p <project_name>   The name of the project\n"
-         "  -h                  Print this help message\n");
+  printf(BOLD UNDERLINE
+         "Usage:" RESET BOLD " mmaker -l " RESET "<language> " BOLD "-p" RESET
+         " <project_name>\n"
+         "\n" BOLD UNDERLINE "Options:\n" RESET BOLD "  -l <language>" RESET
+         "       The language of the project (c, cpp, cc)\n" BOLD
+         "  -p <project_name>" RESET "   The name of the project\n" BOLD
+         "  -h" RESET "                  Print this help message\n");
 }
 
 static void free_mmaker(MMaker **mmaker) {
