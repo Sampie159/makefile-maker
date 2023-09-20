@@ -1,20 +1,20 @@
 #include "project_builder.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define MAX_SIZE 256
+#define MAX_SIZE      256
 #define MAX_PROJ_NAME 64
-
-#define BOLD "\033[1m"
-#define RESET "\033[0m"
-#define UNDERLINE "\033[4m"
+#define BOLD          "\033[1m"
+#define RESET         "\033[0m"
+#define UNDERLINE     "\033[4m"
 
 static void setup_files(MMaker *mmaker, const char *project_path);
 static void create_directories(const char *project_path);
-static int is_valid_language(const char *language);
+static int  is_valid_language(const char *language);
 static void print_help(void);
 static void free_mmaker(MMaker **mmaker);
 
@@ -22,7 +22,8 @@ static void free_mmaker(MMaker **mmaker);
  *                          PUBLIC FUNCTIONS                               *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void setup_project(MMaker *mmaker) {
+void
+setup_project(MMaker *mmaker) {
   if (!is_valid_language(mmaker->language)) {
     printf("Language not supported, use \"c\", \"cpp\" or \"cc\"\n");
     exit(1);
@@ -42,24 +43,18 @@ void setup_project(MMaker *mmaker) {
   free_mmaker(&mmaker);
 }
 
-MMaker *parse_args(int argc, char *argv[]) {
-  char language[4] = "";
+MMaker *
+parse_args(int argc, char *argv[]) {
+  char language[4]                 = "";
   char project_name[MAX_PROJ_NAME] = "";
 
   int opt;
   while ((opt = getopt(argc, argv, "l:p:h")) != -1) {
     switch (opt) {
-    case 'l':
-      strncpy(language, optarg, 3);
-      break;
-    case 'p':
-      strncpy(project_name, optarg, MAX_PROJ_NAME);
-      break;
-    case 'h':
-      print_help();
-      exit(0);
-    default:
-      abort();
+    case 'l': strncpy(language, optarg, 3); break;
+    case 'p': strncpy(project_name, optarg, MAX_PROJ_NAME); break;
+    case 'h': print_help(); exit(0);
+    default: abort();
     }
   }
 
@@ -69,13 +64,13 @@ MMaker *parse_args(int argc, char *argv[]) {
     exit(1);
   }
 
-  MMaker *mmaker = (MMaker *)malloc(sizeof(MMaker));
+  MMaker *mmaker = (MMaker *) malloc(sizeof(MMaker));
   if (mmaker == NULL) {
     perror("Error allocating memory");
     exit(1);
   }
   memset(mmaker, 0, sizeof(MMaker));
-  mmaker->language = language;
+  mmaker->language     = language;
   mmaker->project_name = project_name;
 
   return mmaker;
@@ -85,7 +80,8 @@ MMaker *parse_args(int argc, char *argv[]) {
  *                          PRIVATE FUNCTIONS                              *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static void create_directories(const char *project_path) {
+static void
+create_directories(const char *project_path) {
   // Define the source folder
   char src_dir[MAX_SIZE];
   snprintf(src_dir, MAX_SIZE, "%s/src", project_path);
@@ -95,7 +91,8 @@ static void create_directories(const char *project_path) {
   mkdir(src_dir, 0777);
 }
 
-static void setup_files(MMaker *mmaker, const char *project_path) {
+static void
+setup_files(MMaker *mmaker, const char *project_path) {
   char cmake_path[MAX_SIZE];
   snprintf(cmake_path, MAX_SIZE, "%s/CMakeLists.txt", project_path);
   char main_path[MAX_SIZE];
@@ -123,6 +120,7 @@ static void setup_files(MMaker *mmaker, const char *project_path) {
   snprintf(cmake_content, 1024,
            "cmake_minimum_required(VERSION 3.10)\n\n"
            "project(%s)\n\n"
+           "set(CMAKE_EXPORT_COMPILE_COMMANDS ON)\n\n"
            "%sset(CMAKE_CXX_STANDARD 20)\n"
            "set(CMAKE_CXX_STANDARD_REQUIRED True)\n"
            "set(CMAKE_CXX_FLAGS \"-Wall -Wextra -Wpedantic\")\n\n"
@@ -183,19 +181,24 @@ static void setup_files(MMaker *mmaker, const char *project_path) {
 }
 
 /// Returns 1 if the language is valid, 0 otherwise
-static int is_valid_language(const char *language) {
-  if (strcmp(language, "c") == 0)
+static int
+is_valid_language(const char *language) {
+  if (strcmp(language, "c") == 0) {
     return 1;
-  if (strcmp(language, "cpp") == 0)
+  }
+  if (strcmp(language, "cpp") == 0) {
     return 1;
-  if (strcmp(language, "cc") == 0)
+  }
+  if (strcmp(language, "cc") == 0) {
     return 1;
+  }
 
   return 0;
 }
 
-static void print_help(void) {
-  printf(BOLD UNDERLINE
+static void
+print_help(void) {
+  printf(BOLD           UNDERLINE
          "Usage:" RESET BOLD " mmaker -l " RESET "<language> " BOLD "-p" RESET
          " <project_name>\n"
          "\n" BOLD UNDERLINE "Options:\n" RESET BOLD "  -l <language>" RESET
@@ -204,7 +207,8 @@ static void print_help(void) {
          "  -h" RESET "                  Print this help message\n");
 }
 
-static void free_mmaker(MMaker **mmaker) {
+static void
+free_mmaker(MMaker **mmaker) {
   memset(*mmaker, 0, sizeof(MMaker));
   free(*mmaker);
   *mmaker = NULL;
